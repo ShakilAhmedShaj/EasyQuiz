@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Easy Quiz</string>
+    <string name="true_text">True</string>
+    <string name="false_text">False</string>
+    <string name="next_text">Next</string>
+    <string name="right_ans_text">Correct!</string>
+    <string name="wrong_ans_text">Wrong!</string>
+
+
+    //questions
+
+    <string name="q1">Is Bangladesh Independent?</string>
+    <string name="q2">Is Dhaka capital of Bangladesh??</string>
+    <string name="q3">Bangladesh have 6 divisions?</string>
+    <string name="q4">Bangladesh is near China?</string>
+
+</resources>
