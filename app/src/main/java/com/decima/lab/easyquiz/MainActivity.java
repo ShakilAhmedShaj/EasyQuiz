@@ -10,10 +10,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.decima.lab.easyquiz.data.AnswerListAsyncResponse;
 import com.decima.lab.easyquiz.data.QuestionBank;
 import com.decima.lab.easyquiz.model.Question;
 
-public class MainActivity extends AppCompatActivity{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
 
 
     @Override
@@ -21,7 +25,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new QuestionBank().getQuestions();
+        List<Question> questionList = new QuestionBank().getQuestions(new AnswerListAsyncResponse() {
+            @Override
+            public void processFinished(ArrayList<Question> questionArrayList) {
+
+                Log.d("Inside", "processFinished: " + questionArrayList);
+
+            }
+        });
 
 
     }
