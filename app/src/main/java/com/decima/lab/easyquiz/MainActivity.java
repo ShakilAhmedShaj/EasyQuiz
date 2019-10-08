@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void processFinished(ArrayList<Question> questionArrayList) {
 
+                questionCounterTextview.setText(currentQuestionIndex + " / " + questionArrayList.size());
+
                 Log.d("Inside", "processFinished: " + questionArrayList);
 
                 questionTextview.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
@@ -63,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.prev_button:
-//                if (currentQuestionIndex > 0) {
-//                    currentQuestionIndex = (currentQuestionIndex - 1) % questionList.size();
-//                    updateQuestion();
-//                }
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex = (currentQuestionIndex - 1) % questionList.size();
+                    updateQuestion();
+                }
                 break;
             case R.id.next_button:
                 currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
@@ -88,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String question = questionList.get(currentQuestionIndex).getAnswer();
         questionTextview.setText(question);
+        questionCounterTextview.setText(currentQuestionIndex + " / " + questionList.size());
     }
 }
 
