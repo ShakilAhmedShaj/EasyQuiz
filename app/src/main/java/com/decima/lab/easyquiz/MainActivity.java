@@ -8,30 +8,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.decima.lab.easyquiz.data.AnswerListAsyncResponse;
+import com.decima.lab.easyquiz.data.QuestionBank;
 import com.decima.lab.easyquiz.model.Question;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button falseButton;
+    private TextView questionTextview;
+    private TextView questionCounterTextview;
     private Button trueButton;
+    private Button falseButton;
     private ImageButton nextButton;
     private ImageButton prevButton;
-    private TextView questionTextView;
-
     private int currentQuestionIndex = 0;
-
-    //questions
-
-    private Question[] questionBank = new Question[]{
-
-            new Question(R.string.q1, true),
-            new Question(R.string.q2, true),
-            new Question(R.string.q3, false),
-            new Question(R.string.q4, false)
-
-    };
+    private List<Question> questionList;
 
 
     @Override
@@ -39,62 +33,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Question question = new Question(R.string.q1, true);
-
-        falseButton = findViewById(R.id.false_button);
-        trueButton = findViewById(R.id.true_button);
         nextButton = findViewById(R.id.next_button);
         prevButton = findViewById(R.id.prev_button);
-        questionTextView = findViewById(R.id.answer_text_view);
+        trueButton = findViewById(R.id.true_button);
+        falseButton = findViewById(R.id.false_button);
+        questionCounterTextview = findViewById(R.id.counter_text);
+        questionTextview = findViewById(R.id.question_textview);
 
-        falseButton.setOnClickListener(this); //register our buttons to listen to click events
-        trueButton.setOnClickListener(this);
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
+        trueButton.setOnClickListener(this);
+        falseButton.setOnClickListener(this);
+
+        questionList = new QuestionBank().getQuestions(new AnswerListAsyncResponse() {
+            @Override
+            public void processFinished(ArrayList<Question> questionArrayList) {
+
+                Log.d("Inside", "processFinished: " + questionArrayList);
+
+                questionTextview.setText(questionArrayList.get(currentQuestionIndex).getAnswer());
+
+            }
+        });
+
+
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.false_button:
-                checkAnswer(false);
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.prev_button:
+//                if (currentQuestionIndex > 0) {
+//                    currentQuestionIndex = (currentQuestionIndex - 1) % questionList.size();
+//                    updateQuestion();
+//                }
                 break;
-
-            case R.id.true_button:
-                checkAnswer(true);
-                break;
-
             case R.id.next_button:
-                currentQuestionIndex = (currentQuestionIndex + 1) % questionBank.length;
+                currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
                 updateQuestion();
                 break;
-
-
-            case R.id.prev_button:
-                currentQuestionIndex = currentQuestionIndex > 0 ? --currentQuestionIndex : 0;
-                questionTextView.setText(questionBank[currentQuestionIndex].getQuestionId());
+            case R.id.true_button:
+//                checkAnswer(true);
+//                updateQuestion();
                 break;
-
+            case R.id.false_button:
+//                checkAnswer(false);
+//                updateQuestion();
+                break;
         }
+
     }
 
     private void updateQuestion() {
 
-        questionTextView.setText(questionBank[currentQuestionIndex].getQuestionId());
-    }
-
-    private void checkAnswer(boolean userChoice) {
-
-        boolean answerIsTrue = questionBank[currentQuestionIndex].isAnswerTrue();
-        int toastMessageId = 0;
-
-        if (userChoice == answerIsTrue) {
-            toastMessageId = R.string.right_ans_text;
-        } else {
-            toastMessageId = R.string.wrong_ans_text;
-        }
-
-        Toast.makeText(this, toastMessageId, Toast.LENGTH_SHORT).show();
+        String question = questionList.get(currentQuestionIndex).getAnswer();
+        questionTextview.setText(question);
     }
 }
 
