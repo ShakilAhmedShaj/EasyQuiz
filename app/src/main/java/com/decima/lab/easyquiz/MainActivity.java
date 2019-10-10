@@ -18,7 +18,10 @@ import android.widget.Toast;
 import com.decima.lab.easyquiz.data.AnswerListAsyncResponse;
 import com.decima.lab.easyquiz.data.QuestionBank;
 import com.decima.lab.easyquiz.model.Question;
+import com.decima.lab.easyquiz.model.Score;
+import com.decima.lab.easyquiz.util.Prefs;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +33,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button falseButton;
     private ImageButton nextButton;
     private ImageButton prevButton;
+
+    private TextView highestScoreTextView;
+
     private int currentQuestionIndex = 0;
     private List<Question> questionList;
+
+    private TextView scoreTextView;
+    private Button shareButton;
+
+    private int scoreCounter = 0;
+    private Score score;
+
+    private Prefs prefs;
 
 
     @Override
@@ -39,12 +53,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        score = new Score();
+        prefs = new Prefs(MainActivity.this);
+
         nextButton = findViewById(R.id.next_button);
         prevButton = findViewById(R.id.prev_button);
         trueButton = findViewById(R.id.true_button);
         falseButton = findViewById(R.id.false_button);
         questionCounterTextview = findViewById(R.id.counter_text);
         questionTextview = findViewById(R.id.question_textview);
+
+        scoreTextView = findViewById(R.id.score_text);
+        shareButton = findViewById(R.id.shareButton);
+
+        highestScoreTextView = findViewById(R.id.highest_score);
+
+        scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+
+        highestScoreTextView.setText(MessageFormat.format(" Highest Score: {0}", String.valueOf(prefs.getHighScore())));
+
 
         nextButton.setOnClickListener(this);
         prevButton.setOnClickListener(this);
@@ -98,15 +126,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int toastMessageId = 0;
         if (userChooseCorrect == answerIsTrue) {
 
+            addPoints();
+
             fadeView();
             toastMessageId = R.string.correct_answer;
         } else {
             shakeAnimation();
+            removePoints();
+            //Log.d("Find Score", "removePoints: " + score.getScore());
             toastMessageId = R.string.wrong_answer;
         }
         Toast.makeText(MainActivity.this, toastMessageId,
                 Toast.LENGTH_SHORT)
                 .show();
+
+
+    }
+
+    private void addPoints() {
+
+        scoreCounter += 100;
+        score.setScore(scoreCounter);
+        Log.d("Find Score", "addPoints: " + score.getScore());
+
+        scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+
+
+    }
+
+    private void removePoints() {
+
+        scoreCounter -= 100;
+        if (scoreCounter > 0) {
+            score.setScore(scoreCounter);
+            scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+        } else {
+            scoreCounter = 0;
+            score.setScore(scoreCounter);
+            scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+            //Log.d("Score Bad", "deductPoints: " + score.getScore());
+        }
+
+
+        // Log.d("Score:", "addPoints: " + score.getScore());
 
 
     }
@@ -175,6 +237,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String question = questionList.get(currentQuestionIndex).getAnswer();
         questionTextview.setText(question);
         questionCounterTextview.setText(currentQuestionIndex + " / " + questionList.size());
+    }
+
+    @Override
+    protected void onPause() {
+        prefs.saveHighScore(score.getScore());
+        //prefs.setState(currentQuestionIndex);
+
+        super.onPause();
     }
 }
 
