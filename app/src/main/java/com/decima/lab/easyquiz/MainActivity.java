@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.next_button:
-                currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
+                goNext();
                 updateQuestion();
                 break;
             case R.id.true_button:
@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 cardView.setCardBackgroundColor(Color.WHITE);
+                goNext();
             }
 
             @Override
@@ -200,6 +201,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+    }
+
+    private void goNext() {
+
+        currentQuestionIndex = (currentQuestionIndex + 1) % questionList.size();
+        updateQuestion();
+
 
     }
 
@@ -220,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 cardView.setCardBackgroundColor(Color.WHITE);
+                goNext();
 
             }
 
